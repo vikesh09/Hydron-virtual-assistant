@@ -73,39 +73,3 @@ g++ -std=c++17 main.cpp src/*.cpp -Iinclude -o hydron.exe
 ```cmd
 hydron.exe
 ```
-
----
-
-## 🎓 Viva Guide: OOP Concepts Explanation
-
-Below is a breakdown of how each class in **Hydron** maps to fundamental Object-Oriented Programming concepts:
-
-### 1. **Abstraction (`Task.h`)**
-* **Class:** `Task`
-* **Concept:** Abstraction hides complex implementation details and exposes only essential interfaces. `Task` is an **abstract base class** containing a pure virtual function: `virtual void execute() = 0;`.
-* **Viva Note:** Any concrete task must implement `execute()`, providing a uniform contract without exposing internal logic.
-
-### 2. **Inheritance & Polymorphism (`TimeTask`, `OpenAppTask`, `SearchTask`, `NewTabTask`, `HistoryTask`)**
-* **Classes:** `TimeTask`, `OpenAppTask`, `SearchTask`, `NewTabTask`, `HistoryTask` derived from `Task`.
-* **Concept:**
-  * **Inheritance:** Derived classes inherit base properties (`taskName`) and method signatures from `Task`.
-  * **Polymorphism:** The `Assistant` class executes commands polymorphically via `std::unique_ptr<Task>`. Calling `task->execute()` dynamically invokes the appropriate overridden method at runtime without needing to know the exact concrete type.
-
-### 3. **Encapsulation (`CommandParser`, `Logger`, `Assistant`)**
-* **Classes:** `CommandParser`, `Logger`, `Assistant`
-* **Concept:** Hiding data members (marked `private`/`protected`) and controlling access through public member functions.
-* **Viva Note:** `Logger` hides the `logFilePath` and file handles; `CommandParser` hides its command registry map; `Assistant` encapsulates the state (`isRunning`) and internal execution loop.
-
-### 4. **Exception Handling (`Exceptions.h`)**
-* **Classes:** `HydronException`, `InvalidCommandException`
-* **Concept:** Custom exception hierarchy derived from `std::runtime_error` / `std::exception`.
-* **Viva Note:** Invalid user inputs throw an `InvalidCommandException`, caught in `Assistant::run()` to present a friendly error message without crashing the application.
-
-### 5. **File Handling (`Logger.cpp`)**
-* **Class:** `Logger`
-* **Concept:** Persistence using standard C++ file streams (`std::ofstream` to append commands with timestamps and `std::ifstream` to read `history.txt`).
-
-### 6. **Extensible Factory / Command Registry Pattern (`CommandParser.cpp`)**
-* **Class:** `CommandParser`
-* **Design Advantage:** `CommandParser` maintains a hash map of command keywords to lambda builder functions (`std::function<std::unique_ptr<Task>(const std::string&)>`).
-* **Adding New Commands:** To add a new command in the future, you only need to create a new `Task` subclass and add one registration line in `Assistant::initializeCommands()`.
